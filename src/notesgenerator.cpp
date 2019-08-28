@@ -1,4 +1,7 @@
 
+// This file is part of The Drwalin Sounds project
+// Copyright (C) 2019 Marek Zalewski aka Drwalin aka DrwalinPCF
+
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>

@@ -1,4 +1,7 @@
 
+// This file is part of The Drwalin Sounds project
+// Copyright (C) 2019 Marek Zalewski aka Drwalin aka DrwalinPCF
+
 #ifndef NOTES_GENERATOR_H
 #define NOTES_GENERATOR_H
 
