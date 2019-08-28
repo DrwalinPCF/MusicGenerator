@@ -7,7 +7,7 @@ all: wavgenerate.exe notesgenerator.exe
 wavgenerate.exe: bin/wavgenerate.o bin/wav.o bin/noteparser.o
 	g++ -o $@ $^ $(CFLAGS)
 
-notesgenerator.exe: bin/notesgenerator.o
+notesgenerator.exe: bin/notesgenerator.o bin/generatorutil.o
 	g++ -o $@ $^ $(CFLAGS)
 
 bin/%.o: src/%.cpp
