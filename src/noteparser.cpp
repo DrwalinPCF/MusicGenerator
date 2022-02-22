@@ -10,22 +10,19 @@
 #include <cstdio>
 #include <cstdlib>
 
-int NoteParser::ParseInt( LPCHAR & str )
-{
+int NoteParser::ParseInt( LPCHAR & str ) {
 	int sum=0;
 	for( ; *str >= '0' && *str <= '9'; ++str )
 		sum = sum*10 + (*str-'0');
 	return sum;
 }
 
-void NoteParser::ParseWholeNoteDurarion( LPCHAR & str )
-{
+void NoteParser::ParseWholeNoteDurarion( LPCHAR & str ) {
 	int bpm = ParseInt(str);
 	wholeNoteDuration = 4.0f * 60.0f / float(bpm);
 }
 
-void NoteParser::ParsePause( LPCHAR & str )
-{
+void NoteParser::ParsePause( LPCHAR & str ) {
 	int v = ParseInt( str );
 	float t = wholeNoteDuration / float(v);
 	for( float d=t/2.0f; *str == '.'; d/=2.0f, ++str )
@@ -33,16 +30,14 @@ void NoteParser::ParsePause( LPCHAR & str )
 	currentTime += t;
 }
 
-void NoteParser::ParseMetrum( LPCHAR & str )
-{
+void NoteParser::ParseMetrum( LPCHAR & str ) {
 	metrumUp = ParseInt( str );
 	++str;
 	metrumDown = ParseInt( str );
 	tactTime = float(metrumUp) * wholeNoteDuration / float(metrumDown);
 }
 
-float NoteParser::ParseNote( LPCHAR & str )
-{
+float NoteParser::ParseNote( LPCHAR & str ) {
 	NOTE note = Note( *str ); ++str;
 	if( note == NONE )
 		return 0.0f;
@@ -50,8 +45,7 @@ float NoteParser::ParseNote( LPCHAR & str )
 	Freq freq( note, octave, halftonesModification[note] );
 	++str;
 	float notedur = ParseInt(str);
-	if( notedur == 0 )
-	{
+	if( notedur == 0 ) {
 		printf("\n int = 0" );
 		return 0.0f;
 	}
@@ -64,25 +58,20 @@ float NoteParser::ParseNote( LPCHAR & str )
 	return ret;
 }
 
-void NoteParser::ParseBracket( LPCHAR & str )
-{
+void NoteParser::ParseBracket( LPCHAR & str ) {
 	float t = 0.0f;
-	for( ; *str && *str != ')'; )
-	{
+	for( ; *str && *str != ')'; ) {
 		float f = ParseNote( str );
 		if( t < f )
 			t = f;
 	}
 }
 
-void NoteParser::Parse( const LPCHAR _str )
-{
+void NoteParser::Parse( const LPCHAR _str ) {
 	LPCHAR str = (LPCHAR)_str;
 	NOTE n;
-	for( ; *str; ++str )
-	{
-		switch( *(str++) )
-		{
+	for( ; *str; ++str ) {
+		switch( *(str++) ) {
 		case '(': ParseBracket( str ); break;
 		case 'p': ParsePause( str ); break;
 		case '|': currentTime = float(1+(int((currentTime-0.001f)/tactTime)))*tactTime; break;
@@ -99,8 +88,7 @@ void NoteParser::Parse( const LPCHAR _str )
 	}
 }
 
-void NoteParser::ParseFile( const LPCHAR str )
-{
+void NoteParser::ParseFile( const LPCHAR str ) {
 	FILE * file = fopen( str, "rb" );
 	if( file == NULL )
 		return;
@@ -115,8 +103,7 @@ void NoteParser::ParseFile( const LPCHAR str )
 	free( buf );
 }
 
-void NoteParser::Init( Instrument * instrument, Wav * wav, int metrumUp, int metrumDown, float volume )
-{
+void NoteParser::Init( Instrument * instrument, Wav * wav, int metrumUp, int metrumDown, float volume ) {
 	this->instrument = instrument;
 	this->wav = wav;
 	this->metrumUp = metrumUp;
@@ -129,8 +116,7 @@ void NoteParser::Init( Instrument * instrument, Wav * wav, int metrumUp, int met
 	wholeNoteDuration = 2.0f;
 }
 
-NoteParser::NoteParser()
-{
+NoteParser::NoteParser() {
 	instrument = NULL;
 	wav = NULL;
 }

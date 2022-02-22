@@ -9,8 +9,7 @@
 
 #include "generatorutil.h"
 
-class NotesGenerator
-{
+class NotesGenerator {
 private:
 	
 	char filename[512];

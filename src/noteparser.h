@@ -7,8 +7,7 @@
 
 #include "wav.h"
 
-class NoteParser
-{
+class NoteParser {
 private:
 	
 	Instrument * instrument;

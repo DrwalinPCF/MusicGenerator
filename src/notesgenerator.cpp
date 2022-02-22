@@ -10,21 +10,18 @@
 #include "notesgenerator.h"
 #include "generatorutil.h"
 
-void NotesGenerator::Write( const char * fmt, ... )
-{
+void NotesGenerator::Write( const char * fmt, ... ) {
 	va_list args;
 	va_start( args, fmt );
 	vfprintf( file, fmt, args );
 	va_end( args );
 }
 
-const char * NotesGenerator::GetOutFileName()
-{
+const char * NotesGenerator::GetOutFileName() {
 	return filename;
 }
 
-NotesGenerator::NotesGenerator( int argc, char ** argv )
-{
+NotesGenerator::NotesGenerator( int argc, char ** argv ) {
 	file = NULL;
 	if( argc >= 2 )
 		sprintf( filename, "%s", argv[1] );
@@ -44,28 +41,24 @@ NotesGenerator::NotesGenerator( int argc, char ** argv )
 	tactDuration = metrumUp * (128/metrumDown);
 }
 
-void NotesGenerator::Generate()
-{
+void NotesGenerator::Generate() {
 	Write( "n%i\n", bpm );
 	Write( "m%i/%i\n", metrumUp, metrumDown );
 	
 	int tacts = rand() % 5*metrumDown + metrumDown*3;
-	for( int i=0; i<tacts; ++i )
-	{
+	for( int i=0; i<tacts; ++i ) {
 		GenerateOneTact();
 	}
 }
 
-void NotesGenerator::GenerateDuration( int duration )
-{
+void NotesGenerator::GenerateDuration( int duration ) {
 	int id;
 	for( id=1; (id*2)<duration; id*=2 );
 	Write( "p%i", 128/id );
 	duration -= id;
 	id/=2;
 	int count = 0;
-	while( duration>=id && count < 3 )
-	{
+	while( duration>=id && count < 3 ) {
 		Write( "." );
 		duration-=id;
 		id/=2;
@@ -73,8 +66,7 @@ void NotesGenerator::GenerateDuration( int duration )
 	}
 }
 
-int NotesGenerator::GetRandomOctave()
-{
+int NotesGenerator::GetRandomOctave() {
 	int value = rand()%100;
 	if( value < 70 )
 		return 4;
@@ -85,8 +77,7 @@ int NotesGenerator::GetRandomOctave()
 	return 6;
 }
 
-int NotesGenerator::GetRandomDuration( int & dots )
-{
+int NotesGenerator::GetRandomDuration( int & dots ) {
 	int value;
 	
 	value = rand()%100;
@@ -109,27 +100,23 @@ int NotesGenerator::GetRandomDuration( int & dots )
 	return 1;
 }
 
-int NotesGenerator::GenerateOneNote()
-{
+int NotesGenerator::GenerateOneNote() {
 	char note = GetRandomNote();
 	int octave = GetRandomOctave();
 	int dots = 0;
 	int duration = GetRandomDuration( dots );
 	Write( "%c%i-%i", note, octave, duration );
 	int ret = 128/duration;
-	for( int i = 0; i < dots; ++i )
-	{
+	for( int i = 0; i < dots; ++i ) {
 		Write( "." );
 		ret += 128/(duration<<(i+1));
 	}
 	return ret;
 }
 
-int NotesGenerator::GetStroke( int id )
-{
+int NotesGenerator::GetStroke( int id ) {
 	int value = rand()%100;
-	if( id == 0 )
-	{
+	if( id == 0 ) {
 		if( value < 35 )
 			return 2;
 		if( value < 80 )
@@ -147,17 +134,14 @@ int NotesGenerator::GetStroke( int id )
 	return 4;
 }
 
-void NotesGenerator::GenerateOneTact()
-{
+void NotesGenerator::GenerateOneTact() {
 	int sumduration = 0;
 	
-	for( int id=0;; ++id )
-	{
+	for( int id=0;; ++id ) {
 		int minduration = 1024, maxduration=0;
 		int notesInOne = GetStroke( id );
 		Write( "(" );
-		for( int i=0; i<notesInOne; ++i )
-		{
+		for( int i=0; i<notesInOne; ++i ) {
 			int t = GenerateOneNote();
 			if( minduration > t )
 				minduration = t;
@@ -165,16 +149,14 @@ void NotesGenerator::GenerateOneTact()
 				maxduration = t;
 		}
 		Write( ")" );
-		if( sumduration + maxduration > tactDuration )
-		{
+		if( sumduration + maxduration > tactDuration ) {
 			if( tactDuration == 0 )
 				GenerateDuration( 32 );
 			else
 				GenerateDuration( minduration );
 			break;
 		}
-		else
-		{
+		else {
 			sumduration += minduration;
 			GenerateDuration( minduration );
 		}
@@ -183,15 +165,13 @@ void NotesGenerator::GenerateOneTact()
 	Write( " |\n" );
 }
 
-void NotesGenerator::End()
-{
+void NotesGenerator::End() {
 	if( file )
 		fclose( file );	
 	file = NULL;
 }
 
-int main( int argc, char ** argv )
-{
+int main( int argc, char ** argv ) {
 	srand( time(NULL) );
 	NotesGenerator gen( argc, argv );
 	gen.Generate();
